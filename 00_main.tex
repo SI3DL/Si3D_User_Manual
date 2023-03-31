@@ -1,0 +1,92 @@
+\documentclass[11pt,oneside]{article}
+\usepackage{bookman}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\usepackage[english]{babel}
+\usepackage[hmarginratio=1:1,top=1in]{geometry}
+\usepackage[font=footnotesize,labelfont=bf,up,textfont=it,up]{caption}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{multirow,multicol}
+\usepackage{tabularx}
+\usepackage{float}
+\usepackage{enumitem} % Customized lists
+\usepackage{fancyhdr} % Headers and footers
+\usepackage{adjustbox}
+\usepackage{tabularx}
+\usepackage{colortbl}
+\usepackage{array,booktabs}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{xr}
+\usepackage{titlesec} % Allows customization of titles
+\usepackage{titling} % Customizing the title section
+\usepackage{microtype} % Slightly tweak font spacing for aesthetics
+\usepackage{tocloft}
+\usepackage{etoolbox}
+\usepackage[toc,page]{appendix}
+\usepackage{ifthen}
+\usepackage[hidelinks]{hyperref}
+\usepackage[]{natbib}
+\usepackage{listings}
+
+\patchcmd{\thebibliography}{\chapter*}{\section*}{}{}
+
+\renewcommand{\cftsecfont}{\normalfont} % To change bold font to normal font in sections of table of contents
+
+% \pagestyle{plain} 
+
+\setlist[itemize]{noitemsep} % Make itemize lists more compact
+% \linespread{2}
+\graphicspath{ {Graphs/} }
+
+\titleformat{\section}[block]{\large\scshape}{\thesection.}{1em}{} % Change the look of the section titles
+\titleformat{\subsection}[block]{\large}{\thesubsection.}{1em}{} % Change the look of the section titles
+
+
+\renewcommand\cfttoctitlefont{\Large}
+\renewcommand\cftloftitlefont{\Large}
+\renewcommand\cftlottitlefont{\Large}
+
+
+\begin{document}
+
+\makeatletter
+\def\hlinewd#1{%
+\noalign{\ifnum0=`}\fi\hrule \@height #1 \futurelet
+\reserved@a\@xhline}
+\makeatother
+\DeclareGraphicsExtensions{.pdf,.png,.jpg,.svg,.eps}
+
+\pagenumbering{roman}
+
+\include{01_title}
+
+\addtocounter{page}{1}
+
+\tableofcontents
+\newpage
+\listoffigures
+\listoftables
+\newpage
+
+\pagenumbering{arabic}
+
+\include{02_Intro}
+\include{03_quickStart}
+\include{04_InputFiles}
+\include{05_GenInputFiles}
+\include{06_Tutorials}
+\include{07_OutputFiles}
+\include{08_Theory_Si3D}
+\include{09_Numerical_Methods_Si3D}
+\include{10_Concept_WQ_AEM}
+\include{11_Num_WQ_AEM}
+
+\begin{appendices}
+    \include{12_Appendix}
+\end{appendices}
+
+\end{document}
