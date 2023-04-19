@@ -1,11 +1,11 @@
 \section{Description of Input Files}
 
-The purpose of this section is to provide guidance on the input files required to use the Si3D-L model. To properly use Si3D-L, the input files must reside within the same directory as the executable file of the model (i.e., 'psi3d'). This directory is where output files will be created. The simplest model requires the input file ('si3d\_inp.txt'), the bathymetry file ('h'), and the initial condition file ('si3d\_init.txt') to properly run the numerical model Si3D-L. This simplest model considers only an enclosed basing forced by wind stress and without a heat source at the surface boundary. However, the required input files for the numerical model to run properly variate based on the application. For instance, if heating/cooling from the atmosphere is modeled, the 'surfbc.txt' file is required (see \ref{S:surfbc}). In addition, if open boundaries are used, such as river inflows, the corresponding 'openbc\#\#.txt' file is needed for each open boundary in the model (see \ref{S:openbc}).
+The purpose of this section is to provide guidance on the input files required to use the Si3D-L model. To properly use Si3D-L, the input files must reside within the same directory as the executable file of the model (i.e., `psi3d'). This directory is where output files will be created. The simplest model requires the input file (`si3d\_inp.txt'), the bathymetry file (`h'), and the initial condition file (`si3d\_init.txt') to properly run the numerical model Si3D-L. This simplest model considers only an enclosed basing forced by wind stress and without a heat source at the surface boundary. However, the required input files for the numerical model to run properly variate based on the application. For instance, if heating/cooling from the atmosphere is modeled, the `surfbc.txt' file is required (see \ref{S:surfbc}). In addition, if open boundaries are used, such as river inflows, the corresponding `openbc\#\#.txt' file is needed for each open boundary in the model (see \ref{S:openbc}).
 
 \subsection{Main Input File}
 \label{S:Main}
 
-The main input file in Si3D-L defines model-controlling parameters that determine the model characteristics, numerical techniques for solving the governing equations, and output types for post-processing purposes. The input file name must be named "si3d\_inp.txt", and an example of the file is provided within the "\href{https://github.com/SI3DL/psi3d/tree/main/SampleFiles}{SampleFiles}" folder named "si3d\_inp\_master.txt". 
+The main input file in Si3D-L defines model-controlling parameters that determine the model characteristics, numerical techniques for solving the governing equations, and output types for post-processing purposes. The input file name must be named `si3d\_inp.txt', and an example of the file is provided within the "\href{https://github.com/SI3DL/psi3d/tree/main/SampleFiles}{SampleFiles}" folder named `si3d\_inp\_master.txt'. 
 
 The input file has a total of 12 sections to edit. In all these sections, proper formatting of each line within the file is REQUIRED for proper use of the Si3D-L suite. Otherwise, Si3D-L will run into a reading error, and the model will stop. Each user-editable line within the file follows:
 
@@ -26,67 +26,159 @@ This section is provided to the user to define the starting date of the model ru
 \subsubsection{Space-time domains, cell size \& time step}
 This section is provided for the user to define the space and time domains of the numerical model. The variables to be defined are:
 
-\begin{itemize}
-    \item $xl\ -\ [m]$ stands for the length of the model domain in the $EW$ direction or $x$ coordinate. This variable divided by $idx$ must be equal to the $imx$ parameter within the bathymetry file.
-    \item $yl\ -\ [m]$ stands for the length of the model domain in the $SN$ direction or $y$ coordinate. This variable divided by $idy$ must be equal to the $jmx$ parameter within the bathymetry file.
-    \item $zl\ -\ [m]$ stands for the maximum depth of the model or the length of the domain in the vertical direction $z$.
-    \item $tl\ -\ [sec]$ stands for the total time of model run. This should be at least equal to the number of hours defined in the input files for open boundaries and surface boundary conditions.
-    \item $idx\ -\ [m]$ stands for the cell size of the model domain in the $x$ coordinate.
-    \item $idy\ -\ [m]$ stands for the cell size of the model domain in the $y$ coordinate.
-    \item $idz\ -\ [m]$ stands for the cell size of the model domain in the $z$ coordinate. This value is used within the numerical model when a constant layer thickness is used to define the vertical mesh size. 
-    \item $dzmin\ -\ [m]$ stands for the minimum cell size in the vertical direction. This value is used when .... \textcolor{red}{NEEDS TO BE COMPLETED}
-    \item $datadj\ -\ [m]$ variable to adjust the datum of the depths within the bathymetry file. The default value is $0.0$
-    \item $zeta0\ -\ [m]$ variable to define the initial location of the water surface with respect to $z = 0$
-    \item $idt\ -\ [sec]$ stands for the time step used to solve the numerical model. The user must consider the Courant–Friedrichs–Lewy criterion to define this parameter based on the model application.
-    \item $ibathf\ -\ [-]$ defines if constant or variable layer thickness in the vertical mesh size is used. $ibathf = 0$ for constant layer thickness, and $ibathf = -1$ for variable layer thickness in the vertical direction. If $ifbathf = -1$, a 'si3d\_layer.txt' file, detailing the thicknesses of each layer, is needed as an input file (see \ref{S:layer})
-\end{itemize}
+\begin{description}
+    \item [$xl\ -\ (m)$] stands for the length of the model domain in the $EW$ direction or $x$ coordinate. This variable divided by $idx$ must be equal to the $imx$ parameter within the bathymetry file.
+    \item [$yl\ -\ (m)$] stands for the length of the model domain in the $SN$ direction or $y$ coordinate. This variable divided by $idy$ must be equal to the $jmx$ parameter within the bathymetry file.
+    \item [$zl\ -\ (m)$] stands for the maximum depth of the model or the length of the domain in the vertical direction $z$.
+    \item [$tl\ -\ (sec)$] stands for the total time of model run. This should be at least equal to the number of hours defined in the input files for open boundaries and surface boundary conditions.
+    \item [$idx\ -\ (m)$] stands for the cell size of the model domain in the $x$ coordinate.
+    \item [$idy\ -\ (m)$] stands for the cell size of the model domain in the $y$ coordinate.
+    \item [$idz\ -\ (m)$] stands for the cell size of the model domain in the $z$ coordinate. This value is used within the numerical model when a constant layer thickness is used to define the vertical mesh size. 
+    \item [$dzmin\ -\ (m)$] stands for the minimum cell size in the vertical direction. This value is used when .... \textcolor{red}{NEEDS TO BE COMPLETED}
+    \item [$datadj\ -\ (m)$] variable to adjust the datum of the depths within the bathymetry file. The default value is $0.0$
+    \item [$zeta0\ -\ (m)$] variable to define the initial location of the water surface with respect to $z = 0$
+    \item [$idt\ -\ (sec)$] stands for the time step used to solve the numerical model. The user must consider the Courant–Friedrichs–Lewy criterion to define this parameter based on the model application.
+    \item [$ibathf\ -$] defines if constant or variable layer thickness in the vertical mesh size is used. $ibathf = 0$ for constant layer thickness, and $ibathf = -1$ for variable layer thickness in the vertical direction. If $ifbathf = -1$, a `si3d\_layer.txt' file, detailing the thicknesses of each layer, is needed as an input file (see \ref{S:layer})
+\end{description}
 
 \subsubsection{Parameters controlling solution algorithm}
 This section allows users to define the parameters used within the numerical model to solve the governing equations. The variables to be defined are: 
 
-\begin{itemize}
-    \item $itrap\ -$ defines whether the trapezoidal iteration or the single-step Leap Frog method is used in the solution of the finite difference discretization. $itrap = 0$ for single-step Leap Frog, and $itrap = 1$ for trapezoidal iterations.
-    \item $niter\ -$ defines the number of trapezoidal iterations to be used in the numerical methods. The greater the number of iterations, the longer time for the numerical model to find a solution for a time step. 
-    \item $smooth\ -$ binary parameter for smoothing of Leap Frog solution. $1$ is on and $0$ is no smoothing.
-    \item $beta\ -$ parameter controlling the smoothing filter of the solution. $beta = 0.05-0.2$ is recommended.
-    \item $iturb\ -$ parameter controlling the method used for the turbulent closure method within the governing equations for the vertical direction. $iturb = 0$ for constant vertical eddy viscosity and diffusivity, and $iturb = 1$ to use the implemented 2-equation Mellor \& Yamada turbulent closure method.
-    \item $az0\ -\ [m2/s]$ constant vertical eddy viscosity. Used only when $iturb = 0$
-    \item $dz0\ -\ [m2/s]$ constant vertical eddy diffusivity. Used only when $iturb = 0$
-    \item $iadv\ -$ binary parameter controlling if advection terms within the momentum governing equation are solved. $iadv = 0 \rightarrow$ OFF, and $iadv = 1 \rightarrow$ ON.
-    \item $itrmom\ -$ parameter controlling the algorithm used for solving the momentum horizontal advection. $itrmom = 1 \rightarrow$ centered scheme, $itrmom = 2 \rightarrow$ upwind scheme, $itrmom = 3 \rightarrow $, and $itrmom = 4 \rightarrow $ ... \textcolor{red}{TO BE COMPLETED}
-    \item $ihd\ -$ parameter controlling horizontal diffusive terms within the governing equations. $ihd = 0 \rightarrow$ OFF, $ihd = 1 \rightarrow$ constant values, and $ihd = 2 \rightarrow $ Smagorinsky closure scheme.
-    \item $ax0\ -\ [m2/s]$ constant horizontal eddy diffusivity and viscosity in the $EW$ direction or $x$ coordinate. This value is used when $ihd = 1$ for the governing equations of the velocity field, and at all times for the solution of the scalar transport equation.
-    \item $ay0\ -\ [m2/s]$ constant horizontal eddy diffusivity and viscosity in the $SN$ direction or $y$ coordinate. This value is used when $ihd = 1$ for the governing equations of the velocity field, and at all times for the solution of the scalar transport equation.
-    \item $f \ -\ [1/s]$ constant value that defined the Coriolis frequency parameter.
-    \item $ theta\ -$ defines the weighting parameter for the semi-implicit solution. \textcolor{red}{TO BE COMPLETED}
-    \item $ibc\ -$ binary controlling parameter defining if baroclinc terms are included in the solution of the governing equation. $ibc = 0 \rightarrow$ OFF, and $ibc = 1 \rightarrow$ ON
-    \item $isal\ -$ binary parameter controlling if scalar transport equations is solved. $isal = 0 \rightarrow$ OFF, and $isal = 1 \rightarrow$ ON.
-    \item $itrsch\ -$ parameter controlling the algorithm used for solving the scalar transport equation. $itrsch = 1 \rightarrow$ centered scheme, $itrsch = 2 \rightarrow$ upwind scheme, $itrsch = 3 \rightarrow$ $u$ at layer $k = k1z + 1$, and $itrsch = 4 \rightarrow$ for flux limiter scheme. \textcolor{red}{NEEDS TO BE VERIFIED, I BELIEVE ONLY THE FLUX LIMITED IS USED}
-    \item $cd\ -$ parameter that defines the bottom drag coefficient of the model bottom. This value is constant in the whole domain.
-    \item $ifsbc\ -$ parameter controlling the type of surface boundary condition to be used in the solution of the numerical model. $ifsbc = 0 \rightarrow$ constant wind velocity w/o heat source. $ifsbc = 1 \rightarrow$ pre-process mode (i.e., heat budget prior to model run. $ifsbc = 2 \rightarrow$ runtime mode I, cloud cover as input. $ifsbc = 3 \rightarrow$ runtime II, incoming longwave is used as input. $ifsbc = 10 \rightarrow$ spatially variable runtime I. $ifsbc = 11 \rightarrow$ spatially variable runtime II. $ifsbc = 20 \rightarrow$ variable wind speed w/o heat sources. We refer the reader to Section \ref{S:surfbc} for more details on the different type of surface boundary conditions.
-    \item $dtsbc\ -\ [sec]$ parameter controlling the time step of the records used within the surface boundary conditions file (i.e., 'si3d\_surbc.txt'). Only used if $ifsbc > 0$
-    \item $cw\ -$ defines the wind drag coefficient for the quadratic stress law implemented for the wind-induced shear stress. This parameter is only used when $ifsbc = 0$
-    \item $ws\ -\ [m/s]$ defines the wind speed for the numerical model when $ifsbc = 0$
-    \item $phi\ -\ [^{\circ}]$ defines the wind direction in degrees where the wind is coming from. This parameter is only used when $ifsbc = 0$
-    \item $idbg\ -$ binary parameter controlling if log messages are within the output of the model. This parameter is used for debugging purposes. $idbg = 0 \rightarrow$ OFF, and $idbg = 1 \rightarrow$ ON.
-    \item $nth\ -$ parameter controlling the number of threads used for the parallelization of the model. This number coincides with the number of subdomains into which the model domain is divided into.
-\end{itemize}
+\begin{description}
+    \item [$itrap\ -$] defines whether the trapezoidal iteration or the single-step Leap Frog method is used in the solution of the finite difference discretization. $itrap = 0$ for single-step Leap Frog, and $itrap = 1$ for trapezoidal iterations.
+    \item [$niter\ -$] defines the number of trapezoidal iterations to be used in the numerical methods. The greater the number of iterations, the longer time for the numerical model to find a solution for a time step. 
+    \item [$smooth\ -$] binary parameter for smoothing of Leap Frog solution. $1$ is on and $0$ is no smoothing.
+    \item [$beta\ -$] parameter controlling the smoothing filter of the solution. $beta = 0.05-0.2$ is recommended.
+    \item [$iturb\ -$] parameter controlling the method used for the turbulent closure method within the governing equations for the vertical direction. $iturb = 0$ for constant vertical eddy viscosity and diffusivity, and $iturb = 1$ to use the implemented 2-equation Mellor \& Yamada turbulent closure method.
+    \item [$az0\ -\ (m2/s)$] constant vertical eddy viscosity. Used only when $iturb = 0$
+    \item [$dz0\ -\ (m2/s)$] constant vertical eddy diffusivity. Used only when $iturb = 0$
+    \item [$iadv\ -$] binary parameter controlling if advection terms within the momentum governing equation are solved. $iadv = 0 \rightarrow$ OFF, and $iadv = 1 \rightarrow$ ON.
+    \item [$itrmom\ -$] parameter controlling the algorithm used for solving the momentum horizontal advection. $itrmom = 1 \rightarrow$ centered scheme, $itrmom = 2 \rightarrow$ upwind scheme, $itrmom = 3 \rightarrow $, and $itrmom = 4 \rightarrow $ ... \textcolor{red}{TO BE COMPLETED}
+    \item [$ihd\ -$] parameter controlling horizontal diffusive terms within the governing equations. $ihd = 0 \rightarrow$ OFF, $ihd = 1 \rightarrow$ constant values, and $ihd = 2 \rightarrow $ Smagorinsky closure scheme.
+    \item [$ax0\ -\ (m2/s)$] constant horizontal eddy diffusivity and viscosity in the $EW$ direction or $x$ coordinate. This value is used when $ihd = 1$ for the governing equations of the velocity field, and at all times for the solution of the scalar transport equation.
+    \item [$ay0\ -\ (m2/s)$] constant horizontal eddy diffusivity and viscosity in the $SN$ direction or $y$ coordinate. This value is used when $ihd = 1$ for the governing equations of the velocity field, and at all times for the solution of the scalar transport equation.
+    \item [$f \ -\ (1/s)$] constant value that defined the Coriolis frequency parameter.
+    \item [$ theta\ -$] defines the weighting parameter for the semi-implicit solution. \textcolor{red}{TO BE COMPLETED}
+    \item [$ibc\ -$] binary controlling parameter defining if baroclinc terms are included in the solution of the governing equation. $ibc = 0 \rightarrow$ OFF, and $ibc = 1 \rightarrow$ ON
+    \item [$isal\ -$] binary parameter controlling if scalar transport equations is solved. $isal = 0 \rightarrow$ OFF, and $isal = 1 \rightarrow$ ON.
+    \item [$itrsch\ -$] parameter controlling the algorithm used for solving the scalar transport equation. $itrsch = 1 \rightarrow$ centered scheme, $itrsch = 2 \rightarrow$ upwind scheme, $itrsch = 3 \rightarrow$ $u$ at layer $k = k1z + 1$, and $itrsch = 4 \rightarrow$ for flux limiter scheme. \textcolor{red}{NEEDS TO BE VERIFIED, I BELIEVE ONLY THE FLUX LIMITED IS USED}
+    \item [$cd\ -$] parameter that defines the bottom drag coefficient of the model bottom. This value is constant in the whole domain.
+    \item [$ifsbc\ -$] parameter controlling the type of surface boundary condition to be used in the solution of the numerical model. $ifsbc = 0 \rightarrow$ constant wind velocity w/o heat source. $ifsbc = 1 \rightarrow$ pre-process mode (i.e., heat budget prior to model run. $ifsbc = 2 \rightarrow$ runtime mode I, cloud cover as input. $ifsbc = 3 \rightarrow$ runtime II, incoming longwave is used as input. $ifsbc = 10 \rightarrow$ spatially variable runtime I. $ifsbc = 11 \rightarrow$ spatially variable runtime II. $ifsbc = 20 \rightarrow$ variable wind speed w/o heat sources. We refer the reader to Section \ref{S:surfbc} for more details on the different type of surface boundary conditions.
+    \item [$dtsbc\ -\ (sec)$] parameter controlling the time step of the records used within the surface boundary conditions file (i.e., `si3d\_surbc.txt'). Only used if $ifsbc > 0$
+    \item [$cw\ -$] defines the wind drag coefficient for the quadratic stress law implemented for the wind-induced shear stress. This parameter is only used when $ifsbc = 0$
+    \item [$ws\ -\ (m/s)$] defines the wind speed for the numerical model when $ifsbc = 0$
+    \item [$phi\ -\ (^{\circ})$] defines the wind direction in degrees where the wind is coming from. This parameter is only used when $ifsbc = 0$
+    \item [$idbg\ -$] binary parameter controlling if log messages are within the output of the model. This parameter is used for debugging purposes. $idbg = 0 \rightarrow$ OFF, and $idbg = 1 \rightarrow$ ON.
+    \item [$nth\ -$] parameter controlling the number of threads used for the parallelization of the model. This number coincides with the number of subdomains into which the model domain is divided into.
+\end{description}
 
 \subsubsection{Output specifications for time files}
+This section allows the user to define outputs at specific nodes within the domain. The node location $i,j$ must match the node definition from the bathymetry file. The user-editable parameters are:
+
+\begin{description}
+    \item [$ipt\ -$] parameter controlling the number of steps between consecutive output records. The output files are created for each node and follow `tf\textit{inodes}\_\textit{jnode}.txt'
+    \item [$nnodes\ -$] defines the number of nodes to create outputs for. Integer number between 0 and 20
+    \item [$inodes\ -$] defines the $i-location$ for the nodes to output. The $i-location$ for multiple nodes is specified in a comma-separated format.
+    \item [$jnodes\ -$] defines the $j-location$ for the nodes to output. The $j-location$ for multiple nodes is specified in a comma-separated format.
+\end{description}
 
 \subsubsection{Output specifications for horizontal planes}
+This section allows the user to define outputs of horizontal planes within the model domain. The number of the plane corresponds to a layer within the vertical grid dimensions of the model (e.g., for a constant layer thickness $dz = 1\ m$, plane 10 is to output results at a depth of $10\ m$. The following parameters are user-editable:
+
+\begin{description}
+    \item [$iht\ -$] parameter controlling the number of steps between consecutive output records. The output files are created for plane and follow `plane\_plane\#'
+    \item [$itspfh\ -$] parameter controlling the first time step at which results are saved at the specified planes.
+    \item [$nplanes\ -$] number of planes to save and output results. If $ipxml < 0$ at least $plane\ 2$ must be saved as output.
+    \item [$planes\ -$] vertical index of the layer/s to be saved and output results. The planes must be specified in a comma-separated format. Plane 2 corresponds to the surface layer. 
+\end{description}
 
 \subsubsection{Output specifications for 3D domain files}
+This section allows the user to define if the 3D domain will be saved during the model run. The user-editable parameters are:
+
+\begin{description}
+    \item [$ipxml\ -$] parameter controlling the number of steps between consecutive outputs to the 3D file. The output file is `ptrack\_hydro.bnr'.
+    \item [$itspf\ -$] parameter controlling the first time step at which results are saved. This parameter is recommended to be the same as $itspfh$ if \textit{Paraview} is planned to be used for visualization and post-processing. 
+    \item [$iTurbVars\ -$] binary parameter controlling the outputs of the 3D file. $iTurbVars = 0 \rightarrow$ only velocity and temperature outputs, and $iTurbVars = 1 \rightarrow$ velocity, temperature, and turbulent parameter outputs. 
+\end{description}
 
 \subsubsection{Open boundary condition specifications}
+This section allows the user to define open boundaries in the model domain. Common open boundaries are inflows and outflows out of the lake. The user-editable parameters are:
+
+\begin{description}
+    \item [$nopen\ -$] parameter controlling the number of open boundaries in the model
+    \item [$dtscopenbc\ -\ (sec)$] parameter controlling the periodicity of records in the open boundary files used as input in the numerical model
+    \item [$iside\ -$] comma-separated parameter controlling the side in the domain where the open boundaries are located. $1 \rightarrow$ West, $2 \rightarrow$ North, $3 \rightarrow$ East, and $4 \rightarrow$ South. The sides can only be specified in the cartesian coordinates. 
+    \item [$itype\ -$] comma-separated parameter controlling the type of open boundary. Thus, the inputs associated with the file for the open boundary. $1 \rightarrow$ Water Surface Elevation (WSE), $2 \rightarrow$ Surface Flow (Q), $3 \rightarrow$ subsurface flow (Q), and $4 \rightarrow$ when running a nested simulation with previously obtained results in a coarser grid.
+    \item [$isbc\ -$] comma-separated parameter defining the initial i-location (i.e., cell) for the open boundary. This value is based on the bathymetry file
+    \item [$jsbc\ -$] comma-separated parameter defining the initial j-location for the open boundary. This value is based on the bathymetry file
+    \item [$iebc\ -$] comma-separated parameter defining the last i-location for the open boundary. This value is based on the bathymetry file
+    \item [$jebc\ -$] comma-separated parameter defining the last j-location for the open boundary. This value is based on the bathymetry file    
+\end{description}
 
 \subsubsection{Open boundary conditions for nesting procedures}
+This section controls the creation of open boundary files when using the nesting procedures for models. The output files from this section are for each open boundary created for nesting procedures and follow the names `nbofilei\#\#' and `nbofilex\#\#'. The used-editable parameters are:
+
+\begin{description}
+    \item [$nxBDO\ -$] parameter controlling the number of open boundaries created for nesting procedures.
+    \item [$iob\ -$] parameter controlling the number of time steps between consecutive records saved in the output files (i.e., the frequency of numerical results saved for nesting procedures in a finer grid model).
+    \item [$xxb\ -$] parameter controlling the scale between the coarse and fine numerical models for nesting procedures.
+    \item [$iside\ -$] comma-separated parameter controlling the side in the domain where the open boundaries are located. $1 \rightarrow$ West, $2 \rightarrow$ North, $3 \rightarrow$ East, and $4 \rightarrow$ South. The sides can only be specified in the cartesian coordinates.
+    \item [$isbc\ -$] comma-separated parameter defining the initial i-location (i.e., cell) for the open boundary. This value is based on the bathymetry file
+    \item [$jsbc\ -$] comma-separated parameter defining the initial j-location for the open boundary. This value is based on the bathymetry file
+    \item [$iebc\ -$] comma-separated parameter defining the last i-location for the open boundary. This value is based on the bathymetry file
+    \item [$jebc\ -$] comma-separated parameter defining the last j-location for the open boundary. This value is based on the bathymetry file
+\end{description}
 
 \subsubsection{Specification for water quality and tracer simulation}
+This section controls the use of passive tracers in the model or the use of the water quality model with the solution of the hydrodynamics. The user-editable parameters are: 
+
+\begin{description}
+    \item [$ntr\ -$] parameter controlling the number of tracers to be modeled along the hydrodynamic model. This parameter must be equal to the parameters used for water quality and defined in `si3d\_wq\_input.txt' when $ecomod == 1$.
+    \item [$ecomod\ -$] parameter controlling the type of tracer modeling. $-1 \rightarrow$ tracer cloud modeling, $0 \rightarrow$ passive tracer, and $1 \rightarrow$ water quality model (AEM).
+    \item [$iotr\ -$] parameter controlling the frequency of tracer solution outputs.
+    \item [$itspftr\ -$] parameter controlling the first time step at which results of tracer concentrations in the 3D domain are saved.
+    \item [$ipwq\ -$] parameter controlling the frequency of water quality solution (i.e., how often the water quality model is run).
+\end{description}
 
 \subsubsection{Specification for oxygen system simulations}
+This section controls the use of models that consider analyses of oxygenation systems. The user-editable parameters are:
+
+\begin{description}
+    \item [$ipts\ -$] parameter controlling the number of columns with point source-sinks
+    \item [$Nodev\ -$] parameter controlling the number of devices acting as source-sinks
+    \item [$iodt\ -\ (sec)$] parameter controlling the period between consecutive records in pss file 
+    \item [$ipss\ -$] $i-location$ of the device. The definition of multiple devices at different locations follows the comma-separated format
+    \item [$jpss\ -$] $j-location$ of the device. The definition of multiple devices at different locations follows the comma-separated format
+    \item [$iodev\ -$] id of the device controlling the source and sinks
+\end{description}
 
 \subsubsection{Specification for interpolation method}
+This section controls the method used by Si3D-L to interpolate the spatially variable surface boundary conditions. The user-editable parameters are: 
+\begin{description}
+    \item [$iinterp\ -$]
+    \item [$gammaB\ -$]
+    \item [$delNfactor\ -$]
+\end{description}
+
+\subsection{Initial Condition File}
+\label{S:init}
+Initial conditions for the velocity field, temperature, and tracers are required when using the Si3D-L suite. The values for the velocity field are assumed to follow those of a stagnant fluid (i.e., $u = v = w = 0\ ms^{-1}$), and the conditions for the water temperature and tracer concentrations at $t = 0$ are assumed to be horizontally uniform. Thus, to properly use the numerical model, it is necessary to define the vertical distribution for the temperature of the water column and the tracer concentration when $ntr > 0$. The vertical distribution of the water temperature and tracer concentration are defined within the `si3d\_init.txt' file, and two types are available. 
+
+\subsubsection{Constant Vertical Distribution}
+
+The first type of initial condition defines a constant $\Delta z$ at which the temperatures are defined at $zl/\Delta z + 2$ independent depths. The extra $2$ depths correspond to the initial condition at the surface and bottom boundaries for the Dirichlet boundary condition of the numerical model and are often defined to be the same as the first and last depths of the water column. The `si3d\_init.txt' file is obtained by using the function \href{https://github.com/SI3DL/si3dInputs}{`initCond4si3d.py'}. The description of the function is provided in the \href{https://github.com/SI3DL/si3dInputs}{Github} repository, and an example of how to use this function is provided in \href{https://github.com/SI3DL/si3dInitialConditions}{`InitialConditions.py'}. The depth column in the generated file serves as a reference for the depth at the center of each layer in the numerical model, and only provides the number of rows to be read by the Si3D-L suite and thus assigns the corresponding water temperature and tracer concentration. A `si3d\_init.txt' file is provided in the \href{https://github.com/SI3DL/psi3d/tree/main/SampleFiles}{SampleFiles} folder.
+
+\subsubsection{Variable Vertical Distribution}
+
+The second type of initial condition defines variable $\Delta z$ at which the temperatures and tracer concentrations are defined. For this case, $ibathf = -1$, and the `si3d\_layer.txt' file is necessary along with the `si3d\_init.txt' as input files for the Si3d-L suite. When specifying a variable $\Delta z$, the user must use $DeltaZ = 'variable'$ and must define the maximum depth of the space domain $H$ in the \href{https://github.com/SI3DL/si3dInputs}{`initCond4si3d.py'} function. The maximum depth $H$ must be equal to $zl$ from the `si3d\_inpt.txt' file. A `si3d\_layer.txt' file is provided in the \href{https://github.com/SI3DL/psi3d/tree/main/SampleFiles}{SampleFiles} folder. 
+
+3 different types of vertical spacing are available to the user to define the distribution for the depth, water temperature, and tracer concentration. It is the user's discretion to choose the spacing method to be used within the numerical model, and the best method variate between applications. The different spacing methods are:
+
+\begin{description}
+    \item [$exp\ -$] This method defines an initial layer thickness at the surface boundary and exponentially increases with depth. The input parameters for this option are $dz0s$ and $dzxs$ for the initial layer thickness and base, respectively. 
+    \item [$sbconc\ -$] This method specifies an initial layer thickness and base and the bottom and surface boundaries. This method results in a vertical distribution to be finer towards the boundary and coarser in the middle of the water column. In addition to the inputs for the $exp\ -$ method, the user must specify $dz0b$, $dzxb$, and $Hn$. The first two refer to the thickness and base at the bottom boundary, and the third parameter (i.e., $Hn$) defines the depth at which both depth-increasing layers meet.
+    \item [$surfvarBotconsta\ -$] This method defines an initial layer thickness $dz0s$ at the surface boundary and a base $dzxs$ that increases exponentially with depth until a defined depth $Hn$. After this user-defined depth, the layers are distributed with a constant spacing $dzc$ until the depth $H$. 
+\end{description}
 
 
 \subsection{Surface Boundary Condition File}

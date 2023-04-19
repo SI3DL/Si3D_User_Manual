@@ -31,6 +31,7 @@
 \usepackage[hidelinks]{hyperref}
 \usepackage[]{natbib}
 \usepackage{listings}
+\usepackage{xfrac}
 
 \patchcmd{\thebibliography}{\chapter*}{\section*}{}{}
 
@@ -44,12 +45,14 @@
 
 \titleformat{\section}[block]{\large\scshape}{\thesection.}{1em}{} % Change the look of the section titles
 \titleformat{\subsection}[block]{\large}{\thesubsection.}{1em}{} % Change the look of the section titles
+\titleformat{\subsubsection}[block]{\normalfont}{\thesubsubsection.}{1em}{} % Change the look of the section titles
 
+% \titleformat{\subsection}    
+%        {\normalfont\fontfamily{phv}\fontsize{12}{17}\bfseries\itshape}{\thesubsection}{1em}{}
 
 \renewcommand\cfttoctitlefont{\Large}
 \renewcommand\cftloftitlefont{\Large}
 \renewcommand\cftlottitlefont{\Large}
-
 
 \begin{document}
 

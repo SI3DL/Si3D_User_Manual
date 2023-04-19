@@ -1,0 +1,157 @@
+\subsection{Mesh definition}
+The mesh layers are organized using a z-coordinate system. Layers are indexed with $k\in (1,k_m)$, where $k=1$ represents the surface layer and $k=k_m$ is the bottom layer. Mesh cells are organized in a $(i,j,k)$ coordinate. In general, the height of each layer ($h_k$) is constant; the exceptions are those at the surface and the bottom. The surface layer height ($h_1$) varies as a function of both time and space because of the propagation of the tides and other waves. The bottom layer height ($h_{km}$) varies with the changing bathymetry as a function of space only. Because no wetting and drying of nodal points is considered, it is assumed that the free surface never drops below the bottom of the first layer. The use of equal layer heights permits a convenient implementation of a vertical finite-difference approximation that is second-order accurate in space. If uneven layer heights are chosen, the vertical numerical approximation will become only first-order accurate.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Figures/Grid_scheme.png}
+    \caption{Caption}
+    \label{fig:grid_schemeV}
+\end{figure}
+
+Horizontally, the grid is rectangular with dimensions $i_{\max}\times j_{\max}$. Cells that fall outside of the boundaries are deactivated. The number of activated cells vary for each row and column, based on the shape of the water bodies. Wet cells are indexed for each row $j$ by indices $i_j \in (i_{1,j},i_{m,j})$ , where $i_{1,j}$ indicates the $i$ index of the first cell activated in row $j$, while $i_{m,j}$ indicates the $i$ index of the last cell activated in row $j$. Similarly, for each colum $i$, wet cells are indexed by $j_i \in (j_{1,i},j_{m,i})$, where $j_{1,i}$ indicates the $j$ index of the first cell activated in column $i$, while $j_{m,i}$ indicated the $i$ index of the last cell activated in column $i$.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.6\textwidth]{Figures/Grid_schemeH.png}
+    \caption{Caption}
+    \label{fig:grid_schemeH}
+\end{figure}
+
+Variables are organized in a staggered grid, which means that pressure ($p_{i,j,k}$), density ($\rho_{i,j,k}$), salinity ($s_{i,j,k}$), and temperature ($T_{i,j,k}$), are defined at cell centers, while velocity components are defined in cell faces.  The x-component of velocity ($u$) is defined in the x-normal face ($u_{i+\sfrac{1}{2},j,k}$). Similarly, the y and z-components are defined in the y and z-normal faces ($v_{i,j+\sfrac{1}{2},k}$, $w_{i,j,k+\sfrac{1}{2}}$), respectively. The water level elevation is a two-dimensional variable, and it's defined at cell centers as ($\zeta_{i,j}$). The cell height can vary vertically for all cells, and horizontally for the first and last row, and therefore is defined individually for each cell center as $h_{i,j,k}$.
+
+
+\subsection{Layered averaged equations}
+Governing equations are formulated in terms of layer-averaged variables. The average of any 3-D variable over a layer $k$ will be indicated by a subscript $k$. The layer-averaged value of a variable $\phi$ is defined as,
+\begin{equation}
+    \phi_k = \frac{1}{h_k}\int_{z_{k-\sfrac{1}{2}}}^{z_{k+\sfrac{1}{2}}}\phi\; dz
+\end{equation}
+where the integration limits $z_{k-\sfrac{1}{2}}$ and $z_{k+\sfrac{1}{2}}$ define the $z$ coordinates of the upper and lower layer interfaces, respectively. The coordinate $z_{\sfrac{1}{2}}=\zeta$ represents the free surface elevation, and $z_{km+\sfrac{1}{2}} = z_b$ represents the bottom elevation measured from the datum. The quantities $u_k h_k$ and $v_k h_k$ are volumetric transports and are represented by the symbols $U_k=u_k h_k$ and $V_k=v_k h_k$. The volumetric transports are main variables in the model; the velocities $u_k$ and $v_k$ are computed from the volumetric transports by dividing by $h_k$.
+
+To derive the governing equations based on layer-averaged variables, the Leibnitz' rule is used. For a generic variable $\phi(x, y,z, t)$, the Leibnitz rule, applied to an integral over a layer is:
+\begin{equation}
+    \frac{\partial}{\partial x_i} \int_{z_{k-\sfrac{1}{2}}}^{z_{k+\sfrac{1}{2}}} \phi\;dz = \int_{z_{k-\sfrac{1}{2}}}^{z_{k+\sfrac{1}{2}}} \frac{\partial \phi}{\partial x_i} \;dz + \phi_{k-\sfrac{1}{2}}\frac{\partial z_{k-\sfrac{1}{2} }}{\partial x_i}- \phi_{k+\sfrac{1}{2}}\frac{\partial z_{k+\sfrac{1}{2} }}{\partial x_i}
+\end{equation}
+which rearranging leads to:
+\begin{equation}
+   \int_{z_{k-\sfrac{1}{2}}}^{z_{k+\sfrac{1}{2}}} \frac{\partial \phi}{\partial x_i} \;dz = \frac{\partial (h_k\phi_k)}{\partial x_i}  - \phi_{k-\sfrac{1}{2}}\frac{\partial z_{k-\sfrac{1}{2} }}{\partial x_i} + \phi_{k+\sfrac{1}{2}}\frac{\partial z_{k+\sfrac{1}{2} }}{\partial x_i}.
+   \label{eq:leibnitz}
+\end{equation}
+In addition, the fundamental theorem of calculus is used:
+\begin{equation}
+    \int_{z_{k-\sfrac{1}{2}}}^{z_{k+\sfrac{1}{2}}} \frac{\partial \phi}{\partial z} \;dz = \phi_{z_{k+\sfrac{1}{2}}} - \phi_{z_{k-\sfrac{1}{2}}}
+    \label{eq:FTC}
+\end{equation}
+
+
+\subsubsection{Continuity equation}
+Integrating Equation (\ref{eq:continuity}) over layer $k$, and applying the identities (\ref{eq:leibnitz}) and (\ref{eq:FTC}) we get,
+\begin{equation}
+    \begin{split}
+        \frac{\partial U_k}{\partial x} +  \frac{\partial V_k}{\partial y} &- \left[u_{k-\sfrac{1}{2}} \frac{\partial z_{k-\sfrac{1}{2}}}{\partial x}+v_{k-\sfrac{1}{2}}\frac{\partial z_{k-\sfrac{1}{2}}}{\partial y}\right] \\
+        &+ \left[u_{k+\sfrac{1}{2}} \frac{\partial z_{k+\sfrac{1}{2}}}{\partial x}+v_{k+\sfrac{1}{2}}\frac{\partial z_{k+\sfrac{1}{2}}}{\partial y}\right]  + \left[ w_{k+\sfrac{1}{2}} - w_{k-\sfrac{1}{2}} \right] = 0
+    \end{split}
+\end{equation}
+The terms between brackets are null for every layer ($z_{k+\sfrac{1}{2}}$ and $z_{k-\sfrac{1}{2}}$ are constant in the horizontal directions), except the surface and bottom layers. In the middle layers, the continuity equation is rewritten as:
+\begin{equation}
+    \frac{\partial U_k}{\partial x} +  \frac{\partial V_k}{\partial y} + \left[ w_{k+\sfrac{1}{2}} - w_{k-\sfrac{1}{2}} \right] = 0
+\end{equation}
+In the surface layer ($k=1$), $\dfrac{\partial z_{\sfrac{3}{2}}}{\partial (x,y)}  = 0$ and $w_{\sfrac{1}{2}}=0$. In addition,  $\dfrac{\partial z_{\sfrac{1}{2}}}{\partial (x,y)}  = \dfrac{\partial \zeta}{\partial (x,y)}$. This results in:
+\begin{equation}
+    \frac{\partial U_1}{\partial x} +  \frac{\partial V_1}{\partial y} - \left[u_{\sfrac{1}{2}} \frac{\partial \zeta}{\partial x}+v_{\sfrac{1}{2}}\frac{\partial \zeta}{\partial y}\right]   -  w_{\sfrac{3}{2}}  = 0
+\end{equation}
+Noting that $z_{\sfrac{1}{2}}$ represents the upper boundary, the term between brackets can be replaced with the kinematic BC (Eq. (\ref{eq:kinBC})), then we obtain the mass conservation equation for the upper layer:
+\begin{equation}
+    \frac{\partial \zeta}{\partial t}+\frac{\partial U_1}{\partial x} +  \frac{\partial V_1}{\partial y} -  w_{\sfrac{3}{2}}  = 0
+    \label{eq:cont02}
+\end{equation}
+It can be shown that
+\begin{equation}
+    w_{\sfrac{3}{2}} = -\sum_{k=2}^{k_m} \left[\frac{\partial U_k}{\partial x}+\frac{\partial V_k}{\partial y}\right],
+\end{equation}
+and therefore Equation (\ref{eq:cont02}) can be rewritten as:
+\begin{equation}
+    \frac{\partial \zeta}{\partial t}+\frac{\partial }{\partial x}\sum_{k=1}^{k_m}U_k +\frac{\partial }{\partial x}\sum_{k=1}^{k_m}V_k  = 0
+    \label{eq:cont03}
+\end{equation}
+which is the equation used in the code. Similarly, applying the kinematic boundary condition for the bottom (Eq. (\ref{eq:kinBC_b})),
+\begin{equation}
+    \frac{\partial U_{km}}{\partial x} +  \frac{\partial V_{km}}{\partial y} -  w_{km-\sfrac{1}{2}}  = 0
+\end{equation}
+
+\subsubsection{Momentum equation}
+Integrating Equation (\ref{eq:momentum}) over layer $k$ we get:
+\begin{multline}
+    \int_{z_{k-\sfrac{1}{2}}}^{z_{k+\sfrac{1}{2}}} \left[ \frac{\partial u_i}{\partial t} +  \frac{\partial u_ju_i}{\partial x_j} \right] dz = \\  \int_{z_{k-\sfrac{1}{2}}}^{z_{k+\sfrac{1}{2}}} \left[-\frac{1}{\rho_0} \frac{\partial p}{\partial x_i} + \frac{\partial}{\partial x_j}\left( \nu_{\text{eff},i} \frac{\partial u_i}{\partial x_j}-\frac{2}{3}k \delta_{ij}\right) + \frac{\rho}{\rho_0}g_i - 2\epsilon_{ijk} \Omega_j u_k \right] dz
+    \label{eq:momentumLI01}
+\end{multline}
+The temporal derivative and advective terms (L.H.S) can be rewritten as:
+\begin{align}
+   \frac{\partial U_k}{\partial t}+ \frac{\partial}{\partial x} \int_{z_{k-\sfrac{1}{2}}}^{z_{k+\sfrac{1}{2}}} uu \; dz  &+ \frac{\partial}{\partial y} \int_{z_{k-\sfrac{1}{2}}}^{z_{k+\sfrac{1}{2}}} uv \; dz  \notag\\
+   &- u_{k-\sfrac{1}{2}}\left[\frac{\partial z_{k-\sfrac{1}{2}}}{\partial t}+u_{k-\sfrac{1}{2}} \frac{\partial z_{k-\sfrac{1}{2}}}{\partial x}+v_{k-\sfrac{1}{2}} \frac{\partial z_{k-\sfrac{1}{2}}}{\partial y}-w_{k-\sfrac{1}{2}}\right] \notag\\
+   &+u_{k+\sfrac{1}{2}}\left[0+u_{k+\sfrac{1}{2}} \frac{\partial z_{k+\sfrac{1}{2}}}{\partial x}+v_{k+\sfrac{1}{2}} \frac{\partial z_{k+\sfrac{1}{2}}}{\partial y}-w_{k+\sfrac{1}{2}}\right]
+\end{align}
+At the free surface and bottom, the bracketed terms disappear because of the kinematic boundary conditions. At all other layer interfaces, the derivatives of $z_{k+1 / 2}$ and $z_{k+1 / 2}$ equal zero. The integral terms can be rewritten as:
+\begin{align}
+    &\int_{z_{k-\sfrac{1}{2}}}^{z_{k+\sfrac{1}{2}}} uu \; dz = (Uu)_k +  \int_{z_{k-\sfrac{1}{2}}}^{z_{k+\sfrac{1}{2}}} (u-u_k)^2 \; dz \notag\\ 
+    &\int_{z_{k-\sfrac{1}{2}}}^{z_{k+\sfrac{1}{2}}} uv \; dz = (Vu)_k +  \int_{z_{k-\sfrac{1}{2}}}^{z_{k+\sfrac{1}{2}}} (u-u_k)(v-v_k) \; dz
+\end{align}
+The second terms are sometimes referred to as the momentum dispersion terms, and they will be neglected. The final formulation for the acceleration terms in the layer-integrated equations is 
+\begin{align}
+    \int_{z_{k-\sfrac{1}{2}}}^{z_{k+\sfrac{1}{2}}} \left[ \frac{\partial u_i}{\partial t} +  \frac{\partial u_ju_i}{\partial x_j} \right] dz &= \frac{\partial U_k}{\partial t} + \frac{\partial (Uu)_k}{\partial x} + \frac{\partial (Vu)_k}{\partial y}  &k=(1,k_m) \\
+    &= \frac{\partial U_k}{\partial t} + \frac{\partial (Uu)_k}{\partial x} + \frac{\partial (Vu)_k}{\partial y} +\left.(uw)\right|^{k-\sfrac{1}{2}}_{k+\sfrac{1}{2}}  &k\neq(1,k_m)
+\end{align}
+
+Applying Leibniz rule, the pressure term can be rewritten as:
+\begin{equation}
+    \frac{1}{\rho} \int_{z_{k-\sfrac{1}{2}}}^{z_{k+\sfrac{1}{2}}} \frac{\partial p}{\partial x}\; dz =  \frac{1}{\rho} \left[ \frac{\partial h_k p_k}{\partial x} - p_{k-\sfrac{1}{2}} \frac{\partial z_{k-\sfrac{1}{2}}}{\partial x} + p_{k+\sfrac{1}{2}}\frac{\partial z_{k+\sfrac{1}{2}}}{\partial x} \right]
+\end{equation}
+Considering that for the interfaces between layers, $\partial z_{k\pm\sfrac{1}{2}}/\partial x=0$, and that the atmospheric pressure $p_{\sfrac{1}{2}}$, the expression can be simplified as:
+\begin{align}
+    &\frac{1}{\rho}\frac{\partial h_1 p_1}{\partial x} = \frac{h_1}{\rho}\frac{\partial  p_1}{\partial x} + \frac{p_1}{\rho}\frac{\partial  \zeta}{\partial x}  = \frac{h_1}{\rho}\frac{\partial  p_1}{\partial x} + \frac{h_1 g \rho_1}{2\rho}\frac{\partial  \zeta}{\partial x} + E_1 &\text{[First layer]} \\
+    &\frac{h_k}{\rho}\frac{\partial  p_k}{\partial x}  &\text{[Middle layers]} \\
+     &\frac{1}{\rho}\frac{\partial h_{km} p_{km}}{\partial x} + \frac{p_{km+\sfrac{1}{2}}}{\rho} \frac{\partial z_{km+\sfrac{1}{2}}}{\partial x} = \frac{h_{km}}{\rho} \left( \frac{\partial p_{km}}{\partial x} - \frac{g\rho_{km}}{2}\frac{\partial h_{km}}{\partial x}\right)  &\text{[Bottom layer]}\\
+     &\text{Last one I'm confused what Smith does (3.37)}
+\end{align}
+...
+
+By the end, we have for the top layer
+\begin{equation}
+    \frac{1}{\rho}  \int_{z_{1-\sfrac{1}{2}}}^{z_{1+\sfrac{1}{2}}} \frac{\partial p}{\partial x}dz =  \frac{h_1}{\rho_0}\left[g \rho_1 \frac{\partial \zeta}{\partial x}+\frac{g h_1}{2} \frac{\partial \rho_1}{\partial x}\right];
+\end{equation}
+for the intermediate layers
+\begin{equation}
+    \frac{1}{\rho}  \int_{z_{k-\sfrac{1}{2}}}^{z_{k+\sfrac{1}{2}}} \frac{\partial p}{\partial x}dz = \frac{h_k}{\rho_0}\left[g \rho_1 \frac{\partial \zeta}{\partial x}+\frac{g h_1}{2} \frac{\partial \rho_1}{\partial x}+\sum_{m=2}^k\left(\frac{g h_{m-1}}{2} \frac{\partial \rho_{m-1}}{\partial x}+\frac{g h_m}{2} \frac{\partial \rho_m}{\partial x}\right)\right];
+\end{equation}
+and for the last layer...
+
+For the shear stresses, the result is 
+\begin{equation}
+    \frac{\partial}{\partial x}\left( \nu_{\text{eff},H} h \frac{\partial v}{\partial x}\right)_k + \frac{\partial}{\partial y}\left( \nu_{\text{eff},H} h \frac{\partial v}{\partial y}\right)_k + \frac{\tau_{yz}|^{k-\sfrac{1}{2}}_{k+\sfrac{1}{2}}}{\rho}
+\end{equation}
+
+And for the coriolis force...
+
+\subsection{Summary of layer-averaged equations}
+\textbf{Continuity equations}
+\begin{equation}
+    \frac{\partial \zeta}{\partial t}+\frac{\partial }{\partial x}\sum_{k=1}^{k_m}U_k +\frac{\partial }{\partial x}\sum_{k=1}^{k_m}V_k  = 0
+    \label{eq:LICONT1}
+\end{equation}
+\begin{equation}
+    \frac{\partial U_{km}}{\partial x} +  \frac{\partial V_{km}}{\partial y} -  w_{km-\sfrac{1}{2}}  = 0
+    \label{eq:LICONT2}
+\end{equation}
+
+\textbf{Momentum equations}
+\begin{align}
+ \frac{\partial U_k}{\partial t}+\frac{\partial(U u)_k}{\partial x}+\frac{\partial(V u)_k}{\partial y}&+\left.(u w)\right|_{k+1 / 2} ^{k-1 / 2}-f V_k+\frac{h_k}{\rho_k} g \rho_1 \frac{\partial \zeta}{\partial x}=  \notag\\
+&- \frac{h_k}{\rho_k}\left[\frac{g h_1}{2} \frac{\partial \rho_1}{\partial x}+\sum_{m=2}^k\left(\frac{g h_{m-1}}{2} \frac{\partial \rho_{m-1}}{\partial x}+\frac{g h_m}{2} \frac{\partial \rho_m}{\partial x}\right)\right] \notag\\
+&\qquad+\frac{\partial}{\partial x}\left(A_H h \frac{\partial u}{\partial x}\right)+\frac{\partial}{\partial y}\left(A_H h \frac{\partial u}{\partial y}\right)_k+\left.\left(\frac{\tau_{x z}}{\rho}\right)\right|_{k+1 / 2} ^{k-1 / 2} 
+\end{align}
+
+\begin{align}
+ \frac{\partial V_k}{\partial t}+\frac{\partial(U v)_k}{\partial x}+\frac{\partial(V v)_k}{\partial y}&+\left.(v w)\right|_{k+1 / 2} ^{k-1 / 2}+f U_k+\frac{h_k}{\rho_k} g \rho_1 \frac{\partial \zeta}{\partial y}=  \notag\\
+&-\frac{h_k}{\rho_k}\left[\frac{g h_1}{2} \frac{\partial \rho_1}{\partial y}+\sum_{m=2}^k\left(\frac{g h_{m-1}}{2} \frac{\partial \rho_{m-1}}{\partial y}+\frac{g h_m}{2} \frac{\partial \rho_m}{\partial y}\right)\right]\notag\\
+&\qquad+\frac{\partial}{\partial x}\left(A_H h \frac{\partial v}{\partial x}\right)_k+\frac{\partial}{\partial y}\left(A_H h \frac{\partial v}{\partial y}\right)_k+\left.\left(\frac{\tau_{y z}}{\rho}\right)\right|_{k+1 / 2} ^{k-1 / 2}
+\end{align}
+The mean density $\rho$ has been substituted for the layer-averaged density $\rho_k$  in the denominator of the pressure, vertical stress, and vertical salt flux terms; this substitution requires little effort to implement in the numerical model and reduces any error caused by the Boussinesq approximation.

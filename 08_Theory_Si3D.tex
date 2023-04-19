@@ -1,0 +1,58 @@
+\section{Governing equations}
+The mass conservation equation for an incompressible fluid is:
+\begin{equation}
+    \frac{\partial u_i}{\partial x_i} = 0
+    \label{eq:continuity}
+\end{equation}
+The momentum conservation equation with the Boussinesq approximation (only conserve variation in density in terms that affect weight) reads:
+\begin{equation}
+    \frac{\partial u_i}{\partial t} +  \frac{\partial u_ju_i}{\partial x_j} = -\frac{1}{\rho_0} \frac{\partial p}{\partial x_i} + \frac{\partial}{\partial x_j}\left( \nu_{\text{eff},i} \frac{\partial u_i}{\partial x_j}-\frac{2}{3}k \delta_{ij}\right) + \frac{\rho}{\rho_0}g_i - 2\epsilon_{ijk} \Omega_j u_k
+    \label{eq:momentum}
+\end{equation}
+where $\Omega_j$ is the component of the angular velocity of the earth in the direction $x_j$, $\rho_0$ is the reference value for density, $\nu_{\text{eff},i}=\nu+\nu_{t,j}$ is the effective viscosity, and $\rho$ is the density\footnote{Note that in Smith they denote $p=p_0+p'$ and $\partial p_0/\partial x_i=-\rho_0g_i$, and in the final equation he has $\partial p' / \partial x_i$ (instead of $\partial p / \partial x_i$) and $\rho' g_i / \rho_0$ (instead of $\rho g_i / \rho_0$).}\footnote{The turbulence viscosity $\nu_{t,j}$ has a sub-index $j$ because in lakes and estuaries, horizontal and vertical gradients are sometimes treated separately. Smith ignores the molecular viscosity and the $2/3k\delta_{i,j}$ term.}. An equation of state gives density as a function of temperature ($T$) and salinity ($s$):
+\begin{equation}
+    \rho = f(s,T)
+\end{equation}
+
+\subsection{Treatment of the pressure term}
+Only the pressure and gravity terms are retained in the $x_3$-momentum equation
+\begin{equation}
+    \rho g +\frac{\partial p}{\partial z} = 0
+\end{equation}
+Using this assumption, the pressure gradient terms in the $x$ and $y$ momentum equation can be rewritten as,
+\begin{equation}
+    \frac{1}{\rho_0} \frac{\partial p}{\partial x_i} = \frac{1}{\rho_0} \frac{\partial p_a}{\partial x_i} + g \frac{\partial \zeta}{\partial x_i} + g \frac{1}{\rho_0} \int_z^\zeta \frac{\partial \rho}{\partial x_i} dz'
+\end{equation}
+where the first term on the RHS considers the variation in atmospheric pressure ($p_a$), and can be neglected). The second term is referred to as barotropic term and considers the variation if pressure due to water surface slope, and the third term is known as baroclinic term and considers gradients in pressure due to variation in density. 
+
+With this simplification, Eq. \ref{eq:momentum} can be rewritten as:
+\begin{equation}
+    \frac{\partial u_i}{\partial t} +  \frac{\partial u_ju_i}{\partial x_j} = -g \frac{\partial \zeta}{\partial x_i} - g \frac{1}{\rho_0} \int_z^\zeta \frac{\partial \rho}{\partial x_i} dz' + \frac{\partial}{\partial x_j}\left( \nu_{\text{eff},i} \frac{\partial u_i}{\partial x_j}-\frac{2}{3}k \delta_{ij}\right) + \frac{\rho}{\rho_0}g_i - 2\epsilon_{ijk} \Omega_j u_k
+    \label{eq:momentumPsimp}
+\end{equation}
+
+\subsection{Boundary conditions}
+The elevation of the free-surface can be calculated by considering continuity (kinematic boundary condition):
+\begin{equation}
+    \frac{\partial \zeta}{\partial t} + u_1 \frac{\partial \zeta}{\partial x_1}+ u_2 \frac{\partial \zeta}{\partial x_2} = 0
+    \label{eq:kinBC}
+\end{equation}
+
+For the velocity, equilibrium of shear stresses can be performed. Neglecting the slope of the free surface, the BC results from the equilibirum between shear-stresses and the stress created by wind:
+\begin{align}
+    \tau_{is} &= \tau_{i3}\\
+    c_w\rho_aW_a^2 \hat{\textbf{x}}_i &= \rho_0 \nu_{\text{eff},i} \frac{\partial u_i}{\partial x_3}
+    \label{eq:kinBC_b}
+\end{align}
+where $c_w$ is the dimensionless drag coefficient, $W_a$ is the wind speed 10 m above the free surface, and $\hat{\textbf{x}}_i$ is a unit vector in direction of $x_i$
+
+Similarly, in the bottom, the kinematic boundary condition states
+\begin{equation}
+    u_1 \frac{\partial h}{\partial x_1} + u_2 \frac{\partial h}{\partial x_2} + u_3 = 0 
+\end{equation}
+where $h$ represents a vertical distance measured positive downward from a datum (such as a mean sea level height) above the bottom. The equilibirum of shear stresses is considered:
+\begin{align}
+    \tau_{ib} &= \tau_{i3}\\
+    \rho_0 C_d (u_ju_j)^{0.5}u_i  &= \rho_0 \nu_{\text{eff},i} \frac{\partial u_i}{\partial x_3}
+\end{align}
+In the lateral walls, slip conditions are applied. 
